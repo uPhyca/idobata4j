@@ -36,10 +36,10 @@ public class IdobataUserApp {
         }
 
         String email = args[0];
-        String password = args[0];
-        String organizationSlug = args[0];
-        String roomName = args[0];
-        String source = args[0];
+        String password = args[1];
+        String organizationSlug = args[2];
+        String roomName = args[3];
+        String source = args[4];
 
         FormAuthenticator authenticator = new FormAuthenticator(email, password);
         Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
