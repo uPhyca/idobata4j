@@ -1,0 +1,1 @@
+include ':idobata4j-core', ':idobata4j-examples'

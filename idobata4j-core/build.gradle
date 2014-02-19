@@ -1,0 +1,61 @@
+buildscript {
+    dependencies {
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.2'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'nexus'
+
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+configurations {
+    provided
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
+dependencies {
+    testCompile("junit:junit:${junitVersion}") {
+        exclude group: 'org.hamcrest'
+    }
+    testCompile "org.mockito:mockito-all:${mockitoVersion}"
+    testCompile "org.easytesting:fest-assert-core:${festVersion}"
+}
+
+modifyPom {
+    project {
+        name "Idobata4J"
+        description POM_DESCRIPTION
+        url POM_URL
+
+        scm {
+            url POM_SCM_URL
+            connection POM_SCM_CONNECTION
+            developerConnection POM_SCM_DEV_CONNECTION
+        }
+
+        licenses {
+            license {
+                name POM_LICENCE_NAME
+                url POM_LICENCE_URL
+                distribution POM_LICENCE_DIST
+            }
+        }
+
+        developers {
+            developer {
+                id POM_DEVELOPER_ID
+                name POM_DEVELOPER_NAME
+            }
+        }
+    }
+}
