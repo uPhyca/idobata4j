@@ -2,8 +2,6 @@
 
 Idobata4J is a Idobata(https://idobata.io) API binding library for the Java language licensed under Apache License 2.0.
 
-Idobata4J includes software from JSON.org to parse JSON response from the Idobata API. You can see the license term at http://www.JSON.org/license.html
-
 Usage
 ----
 

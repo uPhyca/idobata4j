@@ -21,12 +21,10 @@ import com.uphyca.idobata.event.MemberStatusChangedEventValue;
 import com.uphyca.idobata.event.MessageCreatedEvent;
 import com.uphyca.idobata.event.MessageCreatedEventValue;
 import com.uphyca.idobata.http.TypedInput;
-import com.uphyca.idobata.json.JSONArray;
-import com.uphyca.idobata.json.JSONException;
-import com.uphyca.idobata.json.JSONObject;
 import com.uphyca.idobata.model.*;
-import com.uphyca.idobata.transform.ConversionException;
-import com.uphyca.idobata.transform.Converter;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
