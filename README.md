@@ -14,7 +14,7 @@ String organizationSlug = ...
 String roomName = ...
 String source = ...
 
-FormAuthenticator authenticator = new FormAuthenticator(email, password);
+RequestInterceptor authenticator = new FormAuthenticator(email, password);
 Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
                                       .build();
 
@@ -33,7 +33,7 @@ String organizationSlug = ...
 String roomName = ...
 String source = ...
 
-TokenAuthenticator authenticator = new TokenAuthenticator(apiToken);
+RequestInterceptor authenticator = new TokenAuthenticator(apiToken);
 Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
                                       .build();
 
@@ -42,6 +42,28 @@ Room room = rooms.get(0);
 
 idobata.postMessage(room.getId(), source);
 
+```
+
+Subscribing stream.
+
+```Java
+RequestInterceptor authenticator = ...
+Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
+                                      .build();
+
+idobata.openStream()
+       .subscribeMessageCreated(new ResponseListener<MessageCreatedEvent>() {
+           @Override
+           public void onResponse(MessageCreatedEvent event) {
+               System.out.println(event.getSenderName() + ":" + event.getBody());
+           }
+       })
+       .subscribeMemberStatusChanged(new ResponseListener<MemberStatusChangedEvent>() {
+           @Override
+           public void onResponse(MemberStatusChangedEvent event) {
+               System.out.println(event.getId() + ":" + event.getStatus());
+           }
+       });
 ```
 
 Download
