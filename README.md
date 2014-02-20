@@ -47,9 +47,22 @@ idobata.postMessage(room.getId(), source);
 Download
 -----
 
+Idobata4J releases are available on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.uphyca.idobata%22).
+
 Gradle
 ```groovy
 compile "com.uphyca.idobata:idobata4j-core:${idobata4jVersion}"
+```
+
+Maven
+```xml
+<dependencies>
+  <dependency>
+    <groupId>com.uphyca.idobata</groupId>
+    <artifactId>idobata4j-core</artifactId>
+    <version>${idobata4j.version}</version>
+  </dependency>
+</dependencies>
 ```
 
 License
