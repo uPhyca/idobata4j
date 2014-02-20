@@ -37,8 +37,4 @@ public class ConversionException extends Exception {
     public ConversionException(Throwable cause) {
         super(cause);
     }
-
-    public ConversionException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
