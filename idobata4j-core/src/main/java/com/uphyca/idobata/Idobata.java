@@ -32,27 +32,65 @@ public interface Idobata {
      */
     Seed getSeed() throws IdobataError;
 
+    /**
+     * /api/messages
+     */
     List<Message> getMessages(List<String> ids) throws IdobataError;
 
+    /**
+     * /api/messages
+     */
     List<Message> getMessages(long roomId, long olderThan) throws IdobataError;
 
+    /**
+     * /api/messages
+     */
     Message postMessage(long roomId, String source) throws IdobataError;
 
+    /**
+     * /api/messages/${id}
+     */
     Message deleteMessage(long messageid) throws IdobataError;
 
+    /**
+     * /api/users
+     */
     List<User> getUsers(List<Long> ids) throws IdobataError;
 
+    /**
+     * /api/users/${id}
+     */
     User getUser(long guyId) throws IdobataError;
 
+    /**
+     * /api/rooms
+     */
     List<Room> getRooms(List<Long> ids) throws IdobataError;
 
+    /**
+     * /api/rooms
+     */
     List<Room> getRooms(String organizationSlug, String roomName) throws IdobataError;
 
+    /**
+     * /api/room/${id}
+     */
     Room getRoom(long roomId) throws IdobataError;
 
+    /**
+     * /api/bots
+     */
     List<Bot> getBots(List<Long> ids) throws IdobataError;
 
     void postTouch(long roomId) throws IdobataError;
 
+    /**
+     * /pusher/auth
+     */
     String postPusherAuth(String channelName, String socketId) throws IdobataError;
+
+    /**
+     * :wss://ws.pusherapp.com/app/${api_key}
+     */
+    IdobataStream openStream() throws IdobataError;
 }

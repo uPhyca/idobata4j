@@ -16,11 +16,13 @@
 
 package com.uphyca.idobata;
 
+import com.pusher.client.Pusher;
 import com.uphyca.idobata.http.Client;
 import com.uphyca.idobata.http.Request;
 import com.uphyca.idobata.http.Response;
 import com.uphyca.idobata.http.TypedInput;
 import com.uphyca.idobata.model.*;
+import com.uphyca.idobata.pusher.PusherBuilder;
 import com.uphyca.idobata.transform.Converter;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +31,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -38,7 +41,7 @@ import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
@@ -57,11 +60,27 @@ public class IdobataTest {
     @Mock
     Converter converter;
 
+    @Mock
+    Pusher pusher;
+
+    PusherBuilder pusherBuilder = new PusherBuilder() {
+        @Override
+        public PusherBuilder buildUpon() {
+            return this;
+        }
+
+        @Override
+        public Pusher build() {
+            return pusher;
+        }
+    };
+
     @Before
     public void setUp() throws Exception {
         underTest = new IdobataBuilder().setClient(client)
                                         .setRequestInterceptor(requestInterceptor)
                                         .setConverter(converter)
+                                        .setPusherBuilder(pusherBuilder)
                                         .build();
     }
 
@@ -335,7 +354,53 @@ public class IdobataTest {
     }
 
     @Test
-    public void testPostPusherAuth() throws Exception {
+    public void postPusherAuth() throws Exception {
+        Response response = mock(Response.class);
+        String expectedString = "abc";
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+        TypedInput in = mock(TypedInput.class);
+        given(in.in()).willReturn(new ByteArrayInputStream(expectedString.getBytes("UTF-8")));
+        given(response.getBody()).willReturn(in);
+        given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
 
+        String channelName = "foo";
+        String socketId = "bar";
+        String actualString = underTest.postPusherAuth(channelName, socketId);
+
+        assertThat(actualString).isEqualTo(expectedString);
+        Request actualRequest = requestCaptor.getValue();
+        assertThat(actualRequest.getMethod()).isEqualTo("POST");
+        assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/pusher/auth").build());
+        assertThat(actualRequest.getHeaders()).isEmpty();
+        assertThat(actualRequest.getBody()).isNotNull();
+        ByteArrayOutputStream actualPostBody = new ByteArrayOutputStream();
+        actualRequest.getBody()
+                     .writeTo(actualPostBody);
+        String expectedPostBody = new StringBuilder().append(URLEncoder.encode("channel_name", "UTF-8"))
+                                                     .append('=')
+                                                     .append(channelName)
+                                                     .append('&')
+                                                     .append(URLEncoder.encode("socket_id", "UTF-8"))
+                                                     .append('=')
+                                                     .append(socketId)
+                                                     .toString();
+        assertThat(actualPostBody.toString("UTF-8")).isEqualTo(expectedPostBody);
+    }
+
+    @Test
+    public void openStream() throws Exception {
+        underTest = spy(underTest);
+        Seed seed = new SeedBean();
+        Records records = new RecordsBean();
+        User user = new UserBean();
+        user.setChannelName("space");
+        seed.setRecords(records);
+        records.setUser(user);
+        doReturn(seed).when(underTest)
+                      .getSeed();
+
+        IdobataStream actualStream = underTest.openStream();
+
+        assertThat(actualStream).isNotNull();
     }
 }

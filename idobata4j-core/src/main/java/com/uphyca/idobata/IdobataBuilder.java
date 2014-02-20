@@ -18,6 +18,7 @@ package com.uphyca.idobata;
 
 import com.uphyca.idobata.http.Client;
 import com.uphyca.idobata.http.UrlConnectionClient;
+import com.uphyca.idobata.pusher.PusherBuilder;
 import com.uphyca.idobata.transform.Converter;
 import com.uphyca.idobata.transform.JSONConverter;
 
@@ -39,6 +40,8 @@ public class IdobataBuilder {
     private RequestInterceptor requestInterceptor;
 
     private Converter converter;
+
+    private PusherBuilder pusherBuilder;
 
     /**
      * The HTTP client used for requests.
@@ -65,6 +68,14 @@ public class IdobataBuilder {
     }
 
     /**
+     * The Pusher builder.
+     */
+    public IdobataBuilder setPusherBuilder(PusherBuilder pusherBuilder) {
+        this.pusherBuilder = pusherBuilder;
+        return this;
+    }
+
+    /**
      * Create the {@link Idobata} instances.
      */
     public Idobata build() {
@@ -73,7 +84,7 @@ public class IdobataBuilder {
         }
 
         ensureDefaults();
-        return new IdobataImpl(client, requestInterceptor, converter);
+        return new IdobataImpl(client, requestInterceptor, converter, pusherBuilder);
     }
 
     private void ensureDefaults() {
@@ -82,6 +93,9 @@ public class IdobataBuilder {
         }
         if (converter == null) {
             converter = new JSONConverter();
+        }
+        if (pusherBuilder == null) {
+            pusherBuilder = new PusherBuilder();
         }
     }
 }

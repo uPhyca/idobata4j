@@ -27,10 +27,18 @@ sourceSets {
 
 dependencies {
     compile "org.json:json:${jsonVersion}"
-
     attachSources "org.json:json:${jsonVersion}:sources"
     attachJavadoc "org.json:json:${jsonVersion}:javadoc"
 
+    compile "com.pusher:pusher-java-client:${pusherVersion}"
+    attachSources "com.pusher:pusher-java-client:${pusherVersion}:sources"
+    attachJavadoc "com.pusher:pusher-java-client:${pusherVersion}:javadoc"
+
+    attachSources "com.google.code.gson:gson:${gsonVersion}:sources"
+    attachJavadoc "com.google.code.gson:gson:${gsonVersion}:javadoc"
+
+    attachSources "org.slf4j:slf4j-api:${slf4jVersion}:sources"
+    attachJavadoc "org.slf4j:slf4j-api:${slf4jVersion}:javadoc"
 
     testCompile("junit:junit:${junitVersion}") {
         exclude group: 'org.hamcrest'
@@ -56,7 +64,11 @@ def jarjar(task, configName) {
                 configurations[configName].files.each {file ->
                     zipfileset(src: file)
                 }
-                rule pattern: "org.json.**", result: p.group+".internal.json${jsonVersion}.@1"
+                rule pattern: "org.json.**", result: p.group+".internal.json.@1"
+                rule pattern: "com.google.gson.**", result: p.group+".internal.gson.@1"
+                rule pattern: "com.pusher.client.**", result: p.group+".internal.pusher_java_client.@1"
+                rule pattern: "org.java_websocket.**", result: p.group+".internal.java_websocket.@1"
+                rule pattern: "org.slf4j.**", result: p.group+".internal.slf4j.@1"
             }
             delete(file: task.archivePath)
             copy(file: jarjarArchivePath, tofile: task.archivePath)
