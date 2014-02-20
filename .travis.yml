@@ -1,6 +1,6 @@
 language: java
 
-script: "gradle build"
+script: gradle build
 
 jdk:
   - openjdk7
@@ -10,4 +10,4 @@ jdk:
 notifications:
   email:
     recipients:
-      - esmasui@gmail.com
+      - masui@uphyca.com

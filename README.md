@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/esmasui/idobata4j.png?branch=master)](http://travis-ci.org/esmasui/idobata4j)
+[![Build Status](https://secure.travis-ci.org/uPhyca/idobata4j.png?branch=master)](http://travis-ci.org/uPhyca/idobata4j)
 
 Idobata4J is a Idobata(https://idobata.io) API binding library for the Java language licensed under Apache License 2.0.
 
