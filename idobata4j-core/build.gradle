@@ -11,7 +11,7 @@ targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
 
 configurations {
-    provided
+    embedded
     tools
     attachSources
     attachJavadoc
@@ -22,15 +22,15 @@ tasks.withType(JavaCompile) {
 }
 
 sourceSets {
-    main { compileClasspath += configurations.provided }
+    main { compileClasspath += configurations.embedded }
 }
 
 dependencies {
-    compile "org.json:json:${jsonVersion}"
+    embedded "org.json:json:${jsonVersion}"
     attachSources "org.json:json:${jsonVersion}:sources"
     attachJavadoc "org.json:json:${jsonVersion}:javadoc"
 
-    compile "com.pusher:pusher-java-client:${pusherVersion}"
+    embedded "com.pusher:pusher-java-client:${pusherVersion}"
     attachSources "com.pusher:pusher-java-client:${pusherVersion}:sources"
     attachJavadoc "com.pusher:pusher-java-client:${pusherVersion}:javadoc"
 
@@ -61,7 +61,7 @@ def jarjar(task, configName) {
             taskdef name: "jarjar", classname: "com.tonicsystems.jarjar.JarJarTask", classpath: configurations.tools.asPath
             jarjar(jarfile: jarjarArchivePath, filesetmanifest: "merge") {
                 zipfileset(src: task.archivePath)
-                configurations[configName].files.each {file ->
+                configurations[configName].each {file ->
                     zipfileset(src: file)
                 }
                 rule pattern: "org.json.**", result: p.group+".internal.json.@1"
@@ -78,7 +78,7 @@ def jarjar(task, configName) {
 }
 
 jar {
-    jarjar(delegate, "compile")
+    jarjar(delegate, "embedded")
 }
 
 sourcesJar {
