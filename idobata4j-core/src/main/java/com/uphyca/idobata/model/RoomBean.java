@@ -16,12 +16,13 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class RoomBean implements Room {
+public class RoomBean implements Room, Serializable {
 
     private long id;
     private String name;

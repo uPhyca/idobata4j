@@ -16,12 +16,13 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class MessageBean implements Message {
+public class MessageBean implements Message, Serializable {
 
     private long id;
     private String body;

@@ -16,12 +16,13 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class OrganizationBean implements Organization {
+public class OrganizationBean implements Organization, Serializable {
     private long id;
     private String name;
     private String slug;

@@ -16,10 +16,12 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
+
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class BotBean implements Bot {
+public class BotBean implements Bot, Serializable {
 
     private long id;
     private String name;

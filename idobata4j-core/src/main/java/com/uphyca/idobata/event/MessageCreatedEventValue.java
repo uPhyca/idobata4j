@@ -16,12 +16,13 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class MessageCreatedEventValue implements MessageCreatedEvent {
+public class MessageCreatedEventValue implements MessageCreatedEvent, Serializable {
 
     private final long id;
     private final String body;

@@ -16,12 +16,14 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class RecordsBean implements Records {
+public class RecordsBean implements Records, Serializable {
+
     private List<Organization> organizations;
     private List<Room> rooms;
     private User user;

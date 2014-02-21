@@ -16,10 +16,13 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
+
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class SeedBean implements Seed {
+public class SeedBean implements Seed, Serializable {
+
     private long version;
     private Records records;
 

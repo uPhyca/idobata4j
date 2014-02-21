@@ -16,10 +16,13 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
+
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class MemberStatusChangedEventValue implements MemberStatusChangedEvent {
+public class MemberStatusChangedEventValue implements MemberStatusChangedEvent, Serializable {
+
     private final long id;
     private final String status;
     private final String type;

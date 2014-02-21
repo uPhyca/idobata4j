@@ -16,12 +16,13 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class UserBean implements User {
+public class UserBean implements User, Serializable {
 
     private long id;
     private String name;
