@@ -63,7 +63,7 @@ public class IdobataStreamTest {
     @Test
     public void subscribeMessageCreated() throws Exception {
 
-        ResponseListener<MessageCreatedEvent> listener = mock(ResponseListener.class);
+        IdobataStream.Listener<MessageCreatedEvent> listener = mock(IdobataStream.Listener.class);
         underTest.subscribeMessageCreated(listener);
 
         underTest.onEvent(channelName, "message_created", "{}");
@@ -74,7 +74,7 @@ public class IdobataStreamTest {
     @Test
     public void subscribeMemberStatusChanged() throws Exception {
 
-        ResponseListener<MemberStatusChangedEvent> listener = mock(ResponseListener.class);
+        IdobataStream.Listener<MemberStatusChangedEvent> listener = mock(IdobataStream.Listener.class);
         underTest.subscribeMemberStatusChanged(listener);
 
         underTest.onEvent(channelName, "member_status_changed", "{}");

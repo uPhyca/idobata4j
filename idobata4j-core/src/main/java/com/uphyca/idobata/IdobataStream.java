@@ -28,15 +28,20 @@ import java.io.Closeable;
  */
 public interface IdobataStream extends Closeable {
 
+    public interface Listener<T> {
+        void onResponse(T response);
+    }
+
     /**
      * event: message_created
      */
-    IdobataStream subscribeMessageCreated(ResponseListener<MessageCreatedEvent> listener);
+    IdobataStream subscribeMessageCreated(Listener<MessageCreatedEvent> listener);
 
     /**
      * event: member_status_changed
      */
-    IdobataStream subscribeMemberStatusChanged(ResponseListener<MemberStatusChangedEvent> listener);
+    IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener);
 
     void setErrorListener(ErrorListener listener);
+
 }

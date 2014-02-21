@@ -18,7 +18,7 @@ package com.example.idobata;
 
 import com.uphyca.idobata.Idobata;
 import com.uphyca.idobata.IdobataBuilder;
-import com.uphyca.idobata.ResponseListener;
+import com.uphyca.idobata.IdobataStream;
 import com.uphyca.idobata.TokenAuthenticator;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
@@ -42,13 +42,13 @@ public class IdobataBotStreamApp {
                                               .build();
 
         idobata.openStream()
-               .subscribeMessageCreated(new ResponseListener<MessageCreatedEvent>() {
+               .subscribeMessageCreated(new IdobataStream.Listener<MessageCreatedEvent>() {
                    @Override
                    public void onResponse(MessageCreatedEvent event) {
                        System.out.println(event.getSenderName() + ":" + event.getBody());
                    }
                })
-               .subscribeMemberStatusChanged(new ResponseListener<MemberStatusChangedEvent>() {
+               .subscribeMemberStatusChanged(new IdobataStream.Listener<MemberStatusChangedEvent>() {
                    @Override
                    public void onResponse(MemberStatusChangedEvent event) {
                        System.out.println(event.getId() + ":" + event.getStatus());

@@ -52,13 +52,13 @@ Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
                                       .build();
 
 idobata.openStream()
-       .subscribeMessageCreated(new ResponseListener<MessageCreatedEvent>() {
+       .subscribeMessageCreated(new IdobataStream.Listener<MessageCreatedEvent>() {
            @Override
            public void onResponse(MessageCreatedEvent event) {
                System.out.println(event.getSenderName() + ":" + event.getBody());
            }
        })
-       .subscribeMemberStatusChanged(new ResponseListener<MemberStatusChangedEvent>() {
+       .subscribeMemberStatusChanged(new IdobataStream.Listener<MemberStatusChangedEvent>() {
            @Override
            public void onResponse(MemberStatusChangedEvent event) {
                System.out.println(event.getId() + ":" + event.getStatus());

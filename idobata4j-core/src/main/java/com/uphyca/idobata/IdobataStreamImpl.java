@@ -53,7 +53,7 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     private final String channelName;
     private final Converter converter;
     private final Pusher pusher;
-    private final Map<String, Set<ResponseListener<?>>> listenerMap = new ConcurrentHashMap<String, Set<ResponseListener<?>>>();
+    private final Map<String, Set<Listener<?>>> listenerMap = new ConcurrentHashMap<String, Set<Listener<?>>>();
 
     private ErrorListener errorListener;
 
@@ -66,13 +66,13 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     }
 
     @Override
-    public IdobataStream subscribeMessageCreated(ResponseListener<MessageCreatedEvent> listener) {
+    public IdobataStream subscribeMessageCreated(Listener<MessageCreatedEvent> listener) {
         addListener(MESSAGE_CREATED, listener);
         return this;
     }
 
     @Override
-    public IdobataStream subscribeMemberStatusChanged(ResponseListener<MemberStatusChangedEvent> listener) {
+    public IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener) {
         addListener(MEMBER_STATUS_CHANGED, listener);
         return this;
     }
@@ -101,10 +101,10 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
         }, ConnectionState.CONNECTED);
     }
 
-    private void addListener(String event, ResponseListener listener) {
-        Set<ResponseListener<?>> listeners = listenerMap.get(event);
+    private void addListener(String event, Listener listener) {
+        Set<Listener<?>> listeners = listenerMap.get(event);
         if (listeners == null) {
-            listenerMap.put(event, listeners = new LinkedHashSet<ResponseListener<?>>());
+            listenerMap.put(event, listeners = new LinkedHashSet<Listener<?>>());
         }
         listeners.add(listener);
     }
@@ -119,11 +119,11 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     }
 
     private void publishEvent(String eventName, Object event) {
-        Set<ResponseListener<?>> listeners = listenerMap.get(eventName);
+        Set<Listener<?>> listeners = listenerMap.get(eventName);
         if (listeners == null) {
             return;
         }
-        for (ResponseListener each : listeners) {
+        for (Listener each : listeners) {
             each.onResponse(event);
         }
     }
