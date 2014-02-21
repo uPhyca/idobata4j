@@ -7,7 +7,7 @@ Release Process
  4. Commit: `git commit -am "Prepare version X.Y.Z."`
  5. Tag: `git tag -a X.Y.Z -m "Version X.Y.Z"`
  6. Push: `git push && git push --tags`
- 7. Release: `./gradlew clean assemble uploadArchives`
+ 7. Release: `./gradlew clean check assemble uploadArchives`
  8. Update version number in `gradle.properties` file to next "SNAPSHOT" version.
  9. Commit: `git commit -am "Prepare next development version."`
  10. Push: `git push`

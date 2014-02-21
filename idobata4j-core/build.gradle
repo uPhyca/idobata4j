@@ -40,6 +40,9 @@ dependencies {
     attachSources "org.slf4j:slf4j-api:${slf4jVersion}:sources"
     attachJavadoc "org.slf4j:slf4j-api:${slf4jVersion}:javadoc"
 
+    testCompile "org.json:json:${jsonVersion}"
+    testCompile "com.pusher:pusher-java-client:${pusherVersion}"
+
     testCompile("junit:junit:${junitVersion}") {
         exclude group: 'org.hamcrest'
     }
