@@ -50,7 +50,7 @@ public interface Idobata {
     /**
      * /api/messages/${id}
      */
-    Message deleteMessage(long messageid) throws IdobataError;
+    Message deleteMessage(long messageId) throws IdobataError;
 
     /**
      * /api/users

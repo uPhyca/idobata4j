@@ -103,8 +103,8 @@ class IdobataImpl implements Idobata {
     }
 
     @Override
-    public Message deleteMessage(long messageid) throws IdobataError {
-        Endpoint endpoint = new Endpoint("https://idobata.io/api/messages").addPath(messageid);
+    public Message deleteMessage(long messageId) throws IdobataError {
+        Endpoint endpoint = new Endpoint("https://idobata.io/api/messages").addPath(messageId);
         Request request = new Request("DELETE", endpoint.build(), Collections.<Header> emptyList(), null);
         Response response = requestInterceptor.execute(client, request);
         try {
