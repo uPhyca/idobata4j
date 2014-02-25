@@ -32,7 +32,7 @@ public class UrlConnectionClient implements Client {
 
     private static final int CHUNK_SIZE = 4096;
 
-    private static final CookieHandler DEFAULT_COOKIE_HANDLER = new CookieHandlerDelegate(new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+    private static final CookieHandler DEFAULT_COOKIE_HANDLER = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
     private final CookieHandler cookieHandler;
 
     public UrlConnectionClient() {
@@ -92,7 +92,7 @@ public class UrlConnectionClient implements Client {
         connection.addRequestProperty("Content-Type", body.mimeType());
         long length = body.length();
         if (length != -1) {
-            connection.setFixedLengthStreamingMode((int)length);
+            connection.setFixedLengthStreamingMode((int) length);
             connection.addRequestProperty("Content-Length", String.valueOf(length));
         } else {
             connection.setChunkedStreamingMode(CHUNK_SIZE);
@@ -105,9 +105,10 @@ public class UrlConnectionClient implements Client {
                                .toString();
         int status = connection.getResponseCode();
         String reason = connection.getResponseMessage();
-        List<Header> headers = copyHeaders(connection.getHeaderFields());
+        Map<String, List<String>> headerFields = validateCookie(connection.getHeaderFields());
+        List<Header> headers = copyHeaders(headerFields);
 
-        cookieHandler.put(URI.create(url), connection.getHeaderFields());
+        cookieHandler.put(URI.create(url), headerFields);
 
         String mimeType = connection.getContentType();
         int length = connection.getContentLength();
@@ -188,43 +189,28 @@ public class UrlConnectionClient implements Client {
         }
     }
 
-    private static final class CookieHandlerDelegate extends CookieHandler {
+    private static final Pattern EXPIRES_PATTERN = Pattern.compile("(expires=[a-zA-Z]{3}, \\d{1,2} [a-zA-Z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2}) -0000;");
 
-        private static final Pattern EXPIRES_PATTERN = Pattern.compile("(expires=[a-zA-Z]{3}, \\d{1,2} [a-zA-Z]{3} \\d{4} \\d{2}:\\d{2}:\\d{2}) -0000;");
-
-        private final CookieHandler delegate;
-
-        private CookieHandlerDelegate(CookieHandler delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public Map<String, List<String>> get(URI uri, Map<String, List<String>> requestHeaders) throws IOException {
-            return delegate.get(uri, requestHeaders);
-        }
-
-        @Override
-        public void put(URI uri, Map<String, List<String>> responseHeaders) throws IOException {
-            if (responseHeaders != null) {
-                Map<String, List<String>> copyHeaders = new HashMap<String, List<String>>(responseHeaders);
-                responseHeaders = copyHeaders;
-                for (String headerKey : responseHeaders.keySet()) {
-                    if (headerKey == null || !(headerKey.equalsIgnoreCase("Set-Cookie2") || headerKey.equalsIgnoreCase("Set-Cookie"))) {
-                        continue;
-                    }
-                    List<String> newHeaderValues = new ArrayList<String>();
-                    for (String headerValue : responseHeaders.get(headerKey)) {
-                        Matcher mt = EXPIRES_PATTERN.matcher(headerValue);
-                        if (mt.find()) {
-                            newHeaderValues.add(mt.replaceFirst("$1 GMT;"));
-                        } else {
-                            newHeaderValues.add(headerValue);
-                        }
-                    }
-                    responseHeaders.put(headerKey, newHeaderValues);
+    private Map<String, List<String>> validateCookie(Map<String, List<String>> responseHeaders) throws IOException {
+        if (responseHeaders != null) {
+            Map<String, List<String>> copyHeaders = new HashMap<String, List<String>>(responseHeaders);
+            responseHeaders = copyHeaders;
+            for (String headerKey : responseHeaders.keySet()) {
+                if (headerKey == null || !(headerKey.equalsIgnoreCase("Set-Cookie2") || headerKey.equalsIgnoreCase("Set-Cookie"))) {
+                    continue;
                 }
+                List<String> newHeaderValues = new ArrayList<String>();
+                for (String headerValue : responseHeaders.get(headerKey)) {
+                    Matcher mt = EXPIRES_PATTERN.matcher(headerValue);
+                    if (mt.find()) {
+                        newHeaderValues.add(mt.replaceFirst("$1 GMT;"));
+                    } else {
+                        newHeaderValues.add(headerValue);
+                    }
+                }
+                responseHeaders.put(headerKey, newHeaderValues);
             }
-            delegate.put(uri, responseHeaders);
         }
+        return responseHeaders;
     }
 }
