@@ -29,7 +29,7 @@ import java.io.Closeable;
 public interface IdobataStream extends Closeable {
 
     public interface Listener<T> {
-        void onResponse(T response);
+        void onEvent(T event);
     }
 
     /**

@@ -44,17 +44,16 @@ public class IdobataBotStreamApp {
         idobata.openStream()
                .subscribeMessageCreated(new IdobataStream.Listener<MessageCreatedEvent>() {
                    @Override
-                   public void onResponse(MessageCreatedEvent event) {
+                   public void onEvent(MessageCreatedEvent event) {
                        System.out.println(event.getSenderName() + ":" + event.getBody());
                    }
                })
                .subscribeMemberStatusChanged(new IdobataStream.Listener<MemberStatusChangedEvent>() {
                    @Override
-                   public void onResponse(MemberStatusChangedEvent event) {
+                   public void onEvent(MemberStatusChangedEvent event) {
                        System.out.println(event.getId() + ":" + event.getStatus());
                    }
                });
-
         final Object lock = new Object();
         synchronized (lock) {
             lock.wait();

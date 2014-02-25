@@ -17,6 +17,8 @@
 package com.uphyca.idobata;
 
 import com.pusher.client.Pusher;
+import com.pusher.client.channel.PresenceChannel;
+import com.pusher.client.channel.PresenceChannelEventListener;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
 import com.uphyca.idobata.transform.Converter;
@@ -26,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.BDDMockito.*;
 
 /**
  * @author Sosuke Masui (masui@uphyca.com)
@@ -42,6 +44,9 @@ public class IdobataStreamTest {
     @Mock
     Pusher pusher;
 
+    @Mock
+    PresenceChannel presenceChannel;
+
     String channelName;
 
     @Mock
@@ -50,6 +55,8 @@ public class IdobataStreamTest {
     @Before
     public void setUp() throws Exception {
         channelName = "abc";
+        given(pusher.subscribePresence(channelName)).willReturn(presenceChannel);
+
         underTest = new IdobataStreamImpl(idobata, pusher, channelName, converter);
     }
 
@@ -62,23 +69,49 @@ public class IdobataStreamTest {
 
     @Test
     public void subscribeMessageCreated() throws Exception {
+        final String eventName = "message_created";
 
         IdobataStream.Listener<MessageCreatedEvent> listener = mock(IdobataStream.Listener.class);
         underTest.subscribeMessageCreated(listener);
 
-        underTest.onEvent(channelName, "message_created", "{}");
+        underTest.onEvent(channelName, eventName, "{}");
 
-        verify(listener).onResponse(any(MessageCreatedEvent.class));
+        verify(presenceChannel).bind(eq(eventName), any(PresenceChannelEventListener.class));
+        verify(listener).onEvent(any(MessageCreatedEvent.class));
     }
 
     @Test
     public void subscribeMemberStatusChanged() throws Exception {
+        final String eventName = "member_status_changed";
 
         IdobataStream.Listener<MemberStatusChangedEvent> listener = mock(IdobataStream.Listener.class);
         underTest.subscribeMemberStatusChanged(listener);
 
-        underTest.onEvent(channelName, "member_status_changed", "{}");
+        underTest.onEvent(channelName, eventName, "{}");
 
-        verify(listener).onResponse(any(MemberStatusChangedEvent.class));
+        verify(presenceChannel).bind(eq(eventName), any(PresenceChannelEventListener.class));
+        verify(listener).onEvent(any(MemberStatusChangedEvent.class));
     }
+
+    @Test
+    public void subscribeMultipleEvents() throws Exception {
+        final String eventName1 = "member_status_changed";
+        final String eventName2 = "message_created";
+
+        IdobataStream.Listener<MemberStatusChangedEvent> listener1 = mock(IdobataStream.Listener.class);
+        underTest.subscribeMemberStatusChanged(listener1);
+
+        IdobataStream.Listener<MessageCreatedEvent> listener2 = mock(IdobataStream.Listener.class);
+        underTest.subscribeMessageCreated(listener2);
+
+        underTest.onEvent(channelName, eventName1, "{}");
+        underTest.onEvent(channelName, eventName2, "{}");
+
+        verify(presenceChannel).bind(eq(eventName1), any(PresenceChannelEventListener.class));
+        verify(presenceChannel).bind(eq(eventName2), any(PresenceChannelEventListener.class));
+
+        verify(listener1, times(1)).onEvent(any(MemberStatusChangedEvent.class));
+        verify(listener2, times(1)).onEvent(any(MessageCreatedEvent.class));
+    }
+
 }

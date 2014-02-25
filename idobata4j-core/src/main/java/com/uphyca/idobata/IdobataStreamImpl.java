@@ -17,6 +17,7 @@
 package com.uphyca.idobata;
 
 import com.pusher.client.Pusher;
+import com.pusher.client.channel.PresenceChannel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements IdobataStream {
+class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements IdobataStream, ConnectionEventListener {
 
     private static final String MESSAGE_CREATED = "message_created";
     private static final String MEMBER_STATUS_CHANGED = "member_status_changed";
@@ -54,6 +55,7 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     private final Converter converter;
     private final Pusher pusher;
     private final Map<String, Set<Listener<?>>> listenerMap = new ConcurrentHashMap<String, Set<Listener<?>>>();
+    private final PresenceChannel presenceChannel;
 
     private ErrorListener errorListener;
 
@@ -62,18 +64,20 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
         this.pusher = pusher;
         this.channelName = channelName;
         this.converter = converter;
-        subscribePresence();
+        presenceChannel = pusher.subscribePresence(channelName);
     }
 
     @Override
     public IdobataStream subscribeMessageCreated(Listener<MessageCreatedEvent> listener) {
         addListener(MESSAGE_CREATED, listener);
+        subscribePresence(MESSAGE_CREATED);
         return this;
     }
 
     @Override
     public IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener) {
         addListener(MEMBER_STATUS_CHANGED, listener);
+        subscribePresence(MEMBER_STATUS_CHANGED);
         return this;
     }
 
@@ -87,18 +91,9 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
         pusher.disconnect();
     }
 
-    private void subscribePresence() {
-        pusher.connect(new ConnectionEventListener() {
-            @Override
-            public void onConnectionStateChange(ConnectionStateChange change) {
-                pusher.subscribePresence(channelName, IdobataStreamImpl.this, events);
-            }
-
-            @Override
-            public void onError(String message, String code, Exception e) {
-                publishError(e);
-            }
-        }, ConnectionState.CONNECTED);
+    private void subscribePresence(String eventName) {
+        presenceChannel.bind(eventName, this);
+        pusher.connect(this, ConnectionState.ALL);
     }
 
     private void addListener(String event, Listener listener) {
@@ -124,7 +119,7 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
             return;
         }
         for (Listener each : listeners) {
-            each.onResponse(event);
+            each.onEvent(event);
         }
     }
 
@@ -146,6 +141,17 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
         } catch (IOException e) {
             publishError(e);
         }
+    }
+
+    @Override
+    public void onConnectionStateChange(ConnectionStateChange change) {
+        System.out.println("state:" + change.getCurrentState()
+                                            .name());
+    }
+
+    @Override
+    public void onError(String message, String code, Exception e) {
+        publishError(e);
     }
 
     private static final class JsonTypedInput implements TypedInput {
