@@ -46,10 +46,6 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     private static final String MESSAGE_CREATED = "message_created";
     private static final String MEMBER_STATUS_CHANGED = "member_status_changed";
 
-    private static final String[] events = {
-            MESSAGE_CREATED, MEMBER_STATUS_CHANGED
-    };
-
     private final Idobata idobata;
     private final String channelName;
     private final Converter converter;
