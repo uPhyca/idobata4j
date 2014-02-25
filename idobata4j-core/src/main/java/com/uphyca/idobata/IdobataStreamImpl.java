@@ -145,8 +145,6 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
 
     @Override
     public void onConnectionStateChange(ConnectionStateChange change) {
-        System.out.println("state:" + change.getCurrentState()
-                                            .name());
     }
 
     @Override
