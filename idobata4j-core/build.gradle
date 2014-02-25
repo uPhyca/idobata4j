@@ -11,7 +11,7 @@ targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
 
 configurations {
-    embedded
+    provided
     tools
     attachSources
     attachJavadoc
@@ -22,15 +22,15 @@ tasks.withType(JavaCompile) {
 }
 
 sourceSets {
-    main { compileClasspath += configurations.embedded }
+    main { compileClasspath += configurations.provided }
 }
 
 dependencies {
-    embedded "org.json:json:${jsonVersion}"
+    provided "org.json:json:${jsonVersion}"
     attachSources "org.json:json:${jsonVersion}:sources"
     attachJavadoc "org.json:json:${jsonVersion}:javadoc"
 
-    embedded "com.pusher:pusher-java-client:${pusherVersion}"
+    provided "com.pusher:pusher-java-client:${pusherVersion}"
     attachSources "com.pusher:pusher-java-client:${pusherVersion}:sources"
     attachJavadoc "com.pusher:pusher-java-client:${pusherVersion}:javadoc"
 
@@ -81,7 +81,7 @@ def jarjar(task, configName) {
 }
 
 jar {
-    jarjar(delegate, "embedded")
+    jarjar(delegate, "provided")
 }
 
 sourcesJar {
