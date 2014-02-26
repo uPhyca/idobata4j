@@ -16,6 +16,7 @@
 
 package com.uphyca.idobata;
 
+import com.uphyca.idobata.event.ConnectionEvent;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
 
@@ -32,6 +33,14 @@ public interface IdobataStream extends Closeable {
         void onEvent(T event);
     }
 
+    public interface ConnectionListener {
+        void closed(ConnectionEvent event);
+
+        void opened(ConnectionEvent event);
+    }
+
+    void open();
+
     /**
      * event: message_created
      */
@@ -42,6 +51,7 @@ public interface IdobataStream extends Closeable {
      */
     IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener);
 
-    void setErrorListener(ErrorListener listener);
+    IdobataStream setErrorListener(ErrorListener listener);
 
+    IdobataStream setConnectionListener(ConnectionListener listener);
 }

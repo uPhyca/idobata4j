@@ -21,6 +21,8 @@ import com.pusher.client.channel.PresenceChannel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
+import com.uphyca.idobata.event.ConnectionEvent;
+import com.uphyca.idobata.event.ConnectionEventValue;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
 import com.uphyca.idobata.http.TypedInput;
@@ -53,7 +55,8 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     private final Map<String, Set<Listener<?>>> listenerMap = new ConcurrentHashMap<String, Set<Listener<?>>>();
     private final PresenceChannel presenceChannel;
 
-    private ErrorListener errorListener;
+    private ErrorListener errorListener = EMPTY_ERROR_LISTENER;
+    private ConnectionListener connectionListener = EMPTY_CONNECTION_LISTENER;
 
     IdobataStreamImpl(Idobata idobata, Pusher pusher, String channelName, Converter converter) {
         this.idobata = idobata;
@@ -78,13 +81,25 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     }
 
     @Override
-    public void setErrorListener(ErrorListener listener) {
-        errorListener = listener;
+    public IdobataStream setErrorListener(ErrorListener listener) {
+        this.errorListener = listener != null ? listener : EMPTY_ERROR_LISTENER;
+        return this;
+    }
+
+    @Override
+    public IdobataStream setConnectionListener(ConnectionListener listener) {
+        this.connectionListener = listener != null ? listener : EMPTY_CONNECTION_LISTENER;
+        return this;
     }
 
     @Override
     public void close() throws IOException {
         pusher.disconnect();
+    }
+
+    @Override
+    public void open() {
+        pusher.connect();
     }
 
     private void subscribePresence(String eventName) {
@@ -101,9 +116,6 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     }
 
     private void publishError(Exception e) {
-        if (errorListener == null) {
-            return;
-        }
         IdobataError idobataError = new IdobataError(e);
         idobataError.fillInStackTrace();
         errorListener.onError(idobataError);
@@ -141,12 +153,39 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
 
     @Override
     public void onConnectionStateChange(ConnectionStateChange change) {
+        switch (change.getCurrentState()) {
+            case CONNECTED:
+                connectionListener.opened(new ConnectionEventValue(ConnectionEvent.OPENED));
+                break;
+            case DISCONNECTED:
+                connectionListener.closed(new ConnectionEventValue(ConnectionEvent.CLOSED));
+                break;
+        }
     }
 
     @Override
     public void onError(String message, String code, Exception e) {
         publishError(e);
     }
+
+    private static final ErrorListener EMPTY_ERROR_LISTENER = new ErrorListener() {
+        @Override
+        public void onError(IdobataError error) {
+            //no-op
+        }
+    };
+
+    private static final ConnectionListener EMPTY_CONNECTION_LISTENER = new ConnectionListener() {
+        @Override
+        public void closed(ConnectionEvent event) {
+            //no-op
+        }
+
+        @Override
+        public void opened(ConnectionEvent event) {
+            //no-op
+        }
+    };
 
     private static final class JsonTypedInput implements TypedInput {
 
