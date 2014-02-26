@@ -30,10 +30,10 @@ public class MultipartTypedOutputTest {
                                                     .append("----hogepiyo--")
                                                     .toString();
 
-        MultipartTypedOutput underTest = new MultipartTypedOutput("hogepiyo").addFormField(new MultipartTypedOutput.TextInput("foo", "bar"));
+        MultipartTypedOutput underTest = new MultipartTypedOutput("--hogepiyo").addFormField(new MultipartTypedOutput.TextInput("foo", "bar"));
         underTest.writeTo(out);
 
-        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=----hogepiyo");
+        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=--hogepiyo");
         assertThat(underTest.length()).isEqualTo(expectedPayload.getBytes("UTF-8").length);
         assertThat(out.toByteArray()).isEqualTo(expectedPayload.getBytes("UTF-8"));
     }
@@ -49,10 +49,10 @@ public class MultipartTypedOutputTest {
                                                     .toString();
 
         ByteArrayInputStream content = new ByteArrayInputStream("abc".getBytes("UTF-8"));
-        MultipartTypedOutput underTest = new MultipartTypedOutput("hogepiyo").addFormField(new MultipartTypedOutput.FileInput("foo", "bar.txt", "text/plain", content));
+        MultipartTypedOutput underTest = new MultipartTypedOutput("--hogepiyo").addFormField(new MultipartTypedOutput.FileInput("foo", "bar.txt", "text/plain", content));
         underTest.writeTo(out);
 
-        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=----hogepiyo");
+        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=--hogepiyo");
         assertThat(underTest.length()).isEqualTo(expectedPayload.getBytes("UTF-8").length);
         assertThat(out.toByteArray()).isEqualTo(expectedPayload.getBytes("UTF-8"));
     }
@@ -70,11 +70,11 @@ public class MultipartTypedOutputTest {
                                                     .append("----hogepiyo--")
                                                     .toString();
 
-        MultipartTypedOutput underTest = new MultipartTypedOutput("hogepiyo").addFormField(new MultipartTypedOutput.TextInput("foo", "bar"))
-                                                                             .addFormField(new MultipartTypedOutput.TextInput("abc", "xyz"));
+        MultipartTypedOutput underTest = new MultipartTypedOutput("--hogepiyo").addFormField(new MultipartTypedOutput.TextInput("foo", "bar"))
+                                                                               .addFormField(new MultipartTypedOutput.TextInput("abc", "xyz"));
         underTest.writeTo(out);
 
-        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=----hogepiyo");
+        assertThat(underTest.mimeType()).isEqualTo("multipart/form-data; charset=UTF-8; boundary=--hogepiyo");
         assertThat(underTest.length()).isEqualTo(expectedPayload.getBytes("UTF-8").length);
         assertThat(out.toByteArray()).isEqualTo(expectedPayload.getBytes("UTF-8"));
     }

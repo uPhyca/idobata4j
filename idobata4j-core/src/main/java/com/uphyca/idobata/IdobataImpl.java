@@ -103,6 +103,27 @@ class IdobataImpl implements Idobata {
     }
 
     @Override
+    public Message postMessage(long roomId, String fileName, String contentType, InputStream content) throws IdobataError {
+        Endpoint endpoint = new Endpoint("https://idobata.io/api/messages");
+        MultipartTypedOutput body = new MultipartTypedOutput("----Idobata4JBoundary" + Long.toHexString(System.currentTimeMillis()));
+
+        try {
+            body.addFormField(new MultipartTypedOutput.TextInput("message[room_id]", Long.toString(roomId)))
+                .addFormField(new MultipartTypedOutput.FileInput("message[images][]", fileName, contentType, content));
+        } catch (IOException e) {
+            throw new IdobataError(e);
+        }
+
+        Request request = new Request("POST", endpoint.build(), Collections.<Header> emptyList(), body);
+        Response response = requestInterceptor.execute(client, request);
+        try {
+            return converter.convert(response.getBody(), Message.class);
+        } catch (Exception e) {
+            throw new IdobataError(e);
+        }
+    }
+
+    @Override
     public Message deleteMessage(long messageId) throws IdobataError {
         Endpoint endpoint = new Endpoint("https://idobata.io/api/messages").addPath(messageId);
         Request request = new Request("DELETE", endpoint.build(), Collections.<Header> emptyList(), null);
@@ -209,12 +230,14 @@ class IdobataImpl implements Idobata {
         }
     }
 
+    //X-CSRF-Token:4oyP0NGX+9oa6zMS83UuSL7+uxpbQT6+hPuumQI4KQk=
+
     @Override
     public IdobataStream openStream() throws IdobataError {
         String channelName = getSeed().getRecords()
                                       .getUser()
                                       .getChannelName();
-        PusherOptions options = new PusherOptions().setAuthorizer(new Authorizer() {
+        Authorizer authorizer = new Authorizer() {
             @Override
             public String authorize(String channelName, String socketId) throws AuthorizationFailureException {
                 try {
@@ -223,7 +246,9 @@ class IdobataImpl implements Idobata {
                     throw new AuthorizationFailureException(error);
                 }
             }
-        });
+        };
+        PusherOptions options = new PusherOptions().setEncrypted(true)
+                                                   .setAuthorizer(authorizer);
         Pusher pusher = pusherBuilder.buildUpon()
                                      .setOptions(options)
                                      .build();

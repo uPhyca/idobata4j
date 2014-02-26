@@ -37,11 +37,22 @@ public class CookieAuthenticator implements RequestInterceptor {
 
     private final CookieHandler cookieHandler;
 
+    private final AuthenticityTokenHandler authenticityTokenHandler;
+
     /**
      * @param cookieHandler The cookieHandler for authentication.
      */
     public CookieAuthenticator(CookieHandler cookieHandler) {
+        this(cookieHandler, EMPTY_AUTHENTICITY_TOKEN_HANDLER);
+    }
+
+    /**
+     * @param cookieHandler The cookieHandler for authentication.
+     * @param authenticityTokenHandler authenticityTokenHandler for authentication.
+     */
+    public CookieAuthenticator(CookieHandler cookieHandler, AuthenticityTokenHandler authenticityTokenHandler) {
         this.cookieHandler = cookieHandler;
+        this.authenticityTokenHandler = authenticityTokenHandler;
     }
 
     @Override
@@ -72,6 +83,15 @@ public class CookieAuthenticator implements RequestInterceptor {
     }
 
     private Response executeInternal(Client client, Request request) throws IOException {
+        String authenticityToken = authenticityTokenHandler.get();
+        if (authenticityToken != null) {
+            ArrayList<Header> requestHeaders = new ArrayList<Header>();
+            if (request.getHeaders() != null) {
+                requestHeaders.addAll(request.getHeaders());
+            }
+            requestHeaders.add(new Header("X-CSRF-Token", authenticityToken));
+            request = new Request(request.getMethod(), request.getUrl(), requestHeaders, request.getBody());
+        }
         Response response = client.execute(request);
         Map<String, List<String>> headers = headerListToMap(response.getHeaders());
         cookieHandler.put(URI.create(response.getUrl()), headers);
@@ -91,4 +111,15 @@ public class CookieAuthenticator implements RequestInterceptor {
         }
         return headerMap;
     }
+
+    private static final AuthenticityTokenHandler EMPTY_AUTHENTICITY_TOKEN_HANDLER = new AuthenticityTokenHandler() {
+        @Override
+        public String get() {
+            return null;
+        }
+
+        @Override
+        public void set(String authenticityToken) {
+        }
+    };
 }

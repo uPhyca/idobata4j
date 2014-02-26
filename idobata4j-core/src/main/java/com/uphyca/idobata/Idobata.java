@@ -18,6 +18,7 @@ package com.uphyca.idobata;
 
 import com.uphyca.idobata.model.*;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -46,6 +47,11 @@ public interface Idobata {
      * /api/messages
      */
     Message postMessage(long roomId, String source) throws IdobataError;
+
+    /**
+     * /api/messages
+     */
+    Message postMessage(long roomId, String fileName, String contentType, InputStream content) throws IdobataError;
 
     /**
      * /api/messages/${id}

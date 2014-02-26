@@ -33,6 +33,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -189,6 +190,49 @@ public class IdobataTest {
                                                      .append('=')
                                                      .append(source)
                                                      .toString();
+        assertThat(actualPostBody.toString("UTF-8")).isEqualTo(expectedPostBody);
+    }
+
+    @Test
+    public void postImage() throws Exception {
+        Response response = mock(Response.class);
+        Message expectedMessage = new MessageBean();
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+
+        given(response.getBody()).willReturn(mock(TypedInput.class));
+        given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
+        given(converter.convert(response.getBody(), Message.class)).willReturn(expectedMessage);
+
+        long roomId = 1L;
+        String fileName = "idobata.png";
+        String contentType = "image/png";
+        InputStream content = new ByteArrayInputStream("a".getBytes("UTF-8"));
+        Message actualMessage = underTest.postMessage(roomId, fileName, contentType, content);
+
+        assertThat(actualMessage).isEqualTo(expectedMessage);
+        Request actualRequest = requestCaptor.getValue();
+        assertThat(actualRequest.getMethod()).isEqualTo("POST");
+        assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/api/messages").build());
+        assertThat(actualRequest.getHeaders()).isEmpty();
+        assertThat(actualRequest.getBody()).isNotNull();
+        ByteArrayOutputStream actualPostBody = new ByteArrayOutputStream();
+        actualRequest.getBody()
+                     .writeTo(actualPostBody);
+        String actualMimeType = actualRequest.getBody()
+                                             .mimeType();
+        String actualBoundary = actualMimeType.split("boundary=")[1];
+        String expectedPostBody = new StringBuilder().append("--" + actualBoundary + "\r\n")
+                                                     .append("Content-Disposition: form-data; name=\"message[room_id]\"\r\n")
+                                                     .append("\r\n")
+                                                     .append("1\r\n")
+                                                     .append("--" + actualBoundary + "\r\n")
+                                                     .append("Content-Disposition: form-data; name=\"message[images][]\"; filename=\"idobata.png\"\r\n")
+                                                     .append("Content-Type: image/png\r\n")
+                                                     .append("\r\n")
+                                                     .append("a\r\n")
+                                                     .append("--" + actualBoundary + "--")
+                                                     .toString();
+
         assertThat(actualPostBody.toString("UTF-8")).isEqualTo(expectedPostBody);
     }
 

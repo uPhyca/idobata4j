@@ -19,6 +19,7 @@ package com.uphyca.idobata;
 import com.uphyca.idobata.http.*;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +33,7 @@ public class FormAuthenticator implements RequestInterceptor {
 
     private final String email;
     private final String password;
+    private String authenticityToken;
 
     /**
      * @param email The email for authentication.
@@ -66,6 +68,14 @@ public class FormAuthenticator implements RequestInterceptor {
     }
 
     private Response executeInternal(Client client, Request request) throws IOException {
+        if (authenticityToken != null) {
+            ArrayList<Header> requestHeaders = new ArrayList<Header>();
+            if (request.getHeaders() != null) {
+                requestHeaders.addAll(request.getHeaders());
+            }
+            requestHeaders.add(new Header("X-CSRF-Token", authenticityToken));
+            request = new Request(request.getMethod(), request.getUrl(), requestHeaders, request.getBody());
+        }
         Response response = client.execute(request);
         return response;
     }
@@ -81,7 +91,7 @@ public class FormAuthenticator implements RequestInterceptor {
         BufferedReader reader = null;
         try {
             reader = createReader(response);
-            grepAuthenticityToken(reader);
+            this.authenticityToken = grepAuthenticityToken(reader);
         } finally {
             closeQuietly(reader);
         }

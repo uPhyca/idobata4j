@@ -59,7 +59,7 @@ public class MultipartTypedOutput implements TypedOutput {
         }
     }
 
-    private static final String MIME_TYPE = "multipart/form-data; charset=UTF-8; boundary=----%s";
+    private static final String MIME_TYPE = "multipart/form-data; charset=UTF-8; boundary=%s";
 
     private String boundary;
     private ByteArrayOutputStream payload = new ByteArrayOutputStream();
@@ -75,19 +75,19 @@ public class MultipartTypedOutput implements TypedOutput {
 
     @Override
     public long length() {
-        return payload.size() + "----".getBytes(CHARSET).length + boundary.getBytes(CHARSET).length + "--".getBytes(CHARSET).length;
+        return payload.size() + "--".getBytes(CHARSET).length + boundary.getBytes(CHARSET).length + "--".getBytes(CHARSET).length;
     }
 
     @Override
     public void writeTo(OutputStream out) throws IOException {
         out.write(payload.toByteArray());
-        out.write("----".getBytes(CHARSET));
+        out.write("--".getBytes(CHARSET));
         out.write(boundary.getBytes(CHARSET));
         out.write("--".getBytes(CHARSET));
     }
 
     public MultipartTypedOutput addFormField(FormField formField) throws IOException {
-        payload.write("----".getBytes(CHARSET));
+        payload.write("--".getBytes(CHARSET));
         payload.write(boundary.getBytes(CHARSET));
         payload.write("\r\n".getBytes(CHARSET));
         payload.write(formField.header()
@@ -95,9 +95,13 @@ public class MultipartTypedOutput implements TypedOutput {
         payload.write("\r\n".getBytes(CHARSET));
         payload.write("\r\n".getBytes(CHARSET));
         InputStream body = formField.body();
-        byte[] buf = new byte[BUFFER_SIZE];
-        for (int count; (count = body.read(buf)) > -1;) {
-            payload.write(buf, 0, count);
+        try {
+            byte[] buf = new byte[BUFFER_SIZE];
+            for (int count; (count = body.read(buf)) > -1;) {
+                payload.write(buf, 0, count);
+            }
+        } finally {
+            body.close();
         }
         payload.write("\r\n".getBytes(CHARSET));
         return this;
