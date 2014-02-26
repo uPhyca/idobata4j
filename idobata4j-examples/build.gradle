@@ -8,7 +8,12 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+configurations {
+    provided
+}
+
 dependencies {
     compile project(':idobata4j-core')
-
+    compile "org.json:json:${jsonVersion}"
+    compile "com.pusher:pusher-java-client:${pusherVersion}"
 }
