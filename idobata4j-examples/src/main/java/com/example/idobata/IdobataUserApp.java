@@ -21,8 +21,6 @@ import com.uphyca.idobata.Idobata;
 import com.uphyca.idobata.IdobataBuilder;
 import com.uphyca.idobata.model.Room;
 
-import java.util.List;
-
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
@@ -45,9 +43,7 @@ public class IdobataUserApp {
         Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
                                               .build();
 
-        List<Room> rooms = idobata.getRooms(organizationSlug, roomName);
-        Room room = rooms.get(0);
-
+        Room room = idobata.getRoom(organizationSlug, roomName);
         idobata.postMessage(room.getId(), source);
     }
 }

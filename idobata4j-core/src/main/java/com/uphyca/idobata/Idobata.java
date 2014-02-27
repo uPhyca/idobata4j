@@ -76,6 +76,12 @@ public interface Idobata {
     /**
      * /api/rooms
      */
+    Room getRoom(String organizationSlug, String roomName) throws IdobataError;
+
+    /**
+     * /api/rooms
+     */
+    @Deprecated
     List<Room> getRooms(String organizationSlug, String roomName) throws IdobataError;
 
     /**

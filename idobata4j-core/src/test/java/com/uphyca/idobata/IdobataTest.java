@@ -303,20 +303,20 @@ public class IdobataTest {
     }
 
     @Test
-    public void getSpecificRooms() throws Exception {
+    public void getSpecificRoom() throws Exception {
         Response response = mock(Response.class);
-        List<Room> expectedRooms = new ArrayList<Room>();
+        Room expectedRoom = new RoomBean();
         ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
 
         given(response.getBody()).willReturn(mock(TypedInput.class));
         given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
-        given(converter.convert(response.getBody(), Room[].class)).willReturn(expectedRooms);
+        given(converter.convert(response.getBody(), Room[].class)).willReturn(Arrays.asList(expectedRoom));
 
         String organizationSlug = "foo";
         String roomName = "bar";
-        List<Room> actualRooms = underTest.getRooms(organizationSlug, roomName);
+        Room actualRoom = underTest.getRoom(organizationSlug, roomName);
 
-        assertThat(actualRooms).isEqualTo(expectedRooms);
+        assertThat(actualRoom).isEqualTo(expectedRoom);
         Request actualRequest = requestCaptor.getValue();
         assertThat(actualRequest.getMethod()).isEqualTo("GET");
         assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/api/rooms").addQuery("organization_slug", organizationSlug)

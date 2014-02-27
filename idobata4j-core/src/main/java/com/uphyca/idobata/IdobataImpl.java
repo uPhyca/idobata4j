@@ -28,6 +28,7 @@ import com.uphyca.idobata.transform.Converter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -172,16 +173,26 @@ class IdobataImpl implements Idobata {
     }
 
     @Override
-    public List<Room> getRooms(String organizationSlug, String roomName) throws IdobataError {
+    public Room getRoom(String organizationSlug, String roomName) throws IdobataError {
         Endpoint endpoint = new Endpoint("https://idobata.io/api/rooms").addQuery("organization_slug", organizationSlug)
                                                                         .addQuery("room_name", roomName);
         Request request = new Request("GET", endpoint.build(), Collections.<Header> emptyList(), null);
         Response response = requestInterceptor.execute(client, request);
         try {
-            return converter.convert(response.getBody(), Room[].class);
+            List<Room> rooms = converter.convert(response.getBody(), Room[].class);
+            if (rooms != null && rooms.size() >= 1) {
+                return rooms.get(0);
+            }
+            return null;
         } catch (Exception e) {
             throw new IdobataError(e);
         }
+    }
+
+    @Override
+    public List<Room> getRooms(String organizationSlug, String roomName) throws IdobataError {
+        Room room = getRoom(organizationSlug, roomName);
+        return room != null ? Arrays.asList(room) : Collections.<Room> emptyList();
     }
 
     @Override

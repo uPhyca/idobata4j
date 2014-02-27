@@ -44,9 +44,7 @@ public class IdobataBotApp {
         Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
                                               .build();
 
-        List<Room> rooms = idobata.getRooms(organizationSlug, roomName);
-        Room room = rooms.get(0);
-
+        Room room = idobata.getRoom(organizationSlug, roomName);
         idobata.postMessage(room.getId(), source);
     }
 }
