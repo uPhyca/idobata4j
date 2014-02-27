@@ -210,7 +210,8 @@ class IdobataImpl implements Idobata {
 
     @Override
     public void postTouch(long roomId) throws IdobataError {
-        Endpoint endpoint = new Endpoint("https://idobata.io/api/rooms").addPath(roomId);
+        Endpoint endpoint = new Endpoint("https://idobata.io/api/user/rooms").addPath(roomId)
+                                                                             .addPath("touch");
         Request request = new Request("POST", endpoint.build(), Collections.<Header> emptyList(), null);
         requestInterceptor.execute(client, request);
     }

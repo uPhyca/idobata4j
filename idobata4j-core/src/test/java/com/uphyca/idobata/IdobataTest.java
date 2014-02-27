@@ -394,7 +394,24 @@ public class IdobataTest {
 
     @Test
     public void testPostTouch() throws Exception {
+        Response response = mock(Response.class);
+        Message expectedMessage = new MessageBean();
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
 
+        given(response.getBody()).willReturn(mock(TypedInput.class));
+        given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
+        given(converter.convert(response.getBody(), Message.class)).willReturn(expectedMessage);
+
+        long roomId = 1L;
+        underTest.postTouch(roomId);
+
+        Request actualRequest = requestCaptor.getValue();
+        assertThat(actualRequest.getMethod()).isEqualTo("POST");
+        assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/api/user/rooms/").addPath(roomId)
+                                                                                                       .addPath("touch")
+                                                                                                       .build());
+        assertThat(actualRequest.getHeaders()).isEmpty();
+        assertThat(actualRequest.getBody()).isNull();
     }
 
     @Test
