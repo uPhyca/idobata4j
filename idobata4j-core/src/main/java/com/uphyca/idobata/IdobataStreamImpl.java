@@ -21,10 +21,7 @@ import com.pusher.client.channel.PresenceChannel;
 import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
-import com.uphyca.idobata.event.ConnectionEvent;
-import com.uphyca.idobata.event.ConnectionEventValue;
-import com.uphyca.idobata.event.MemberStatusChangedEvent;
-import com.uphyca.idobata.event.MessageCreatedEvent;
+import com.uphyca.idobata.event.*;
 import com.uphyca.idobata.http.TypedInput;
 import com.uphyca.idobata.pusher.PresenceChannelEventListenerAdapter;
 import com.uphyca.idobata.transform.ConversionException;
@@ -35,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +45,15 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
 
     private static final String MESSAGE_CREATED = "message_created";
     private static final String MEMBER_STATUS_CHANGED = "member_status_changed";
+    private static final String ROOM_TOUCHED = "room_touched";
+
+    private static final Map<String, Type> TYPE_MAP;
+    static {
+        TYPE_MAP = new HashMap<String, Type>();
+        TYPE_MAP.put(MESSAGE_CREATED, MessageCreatedEvent.class);
+        TYPE_MAP.put(MEMBER_STATUS_CHANGED, MemberStatusChangedEvent.class);
+        TYPE_MAP.put(ROOM_TOUCHED, RoomTouchedEvent.class);
+    }
 
     private final Idobata idobata;
     private final String channelName;
@@ -77,6 +84,13 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     public IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener) {
         addListener(MEMBER_STATUS_CHANGED, listener);
         subscribePresence(MEMBER_STATUS_CHANGED);
+        return this;
+    }
+
+    @Override
+    public IdobataStream subscribeRoomTouched(Listener<RoomTouchedEvent> listener) {
+        addListener(ROOM_TOUCHED, listener);
+        subscribePresence(ROOM_TOUCHED);
         return this;
     }
 
@@ -134,12 +148,7 @@ class IdobataStreamImpl extends PresenceChannelEventListenerAdapter implements I
     @Override
     public void onEvent(String channelName, String eventName, String data) {
         try {
-            Type type = null;
-            if (eventName.equals(MESSAGE_CREATED)) {
-                type = MessageCreatedEvent.class;
-            } else if (eventName.equals(MEMBER_STATUS_CHANGED)) {
-                type = MemberStatusChangedEvent.class;
-            }
+            Type type = TYPE_MAP.get(eventName);
             if (type == null) {
                 throw new IllegalStateException();
             }

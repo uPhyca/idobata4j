@@ -21,6 +21,7 @@ import com.pusher.client.channel.PresenceChannel;
 import com.pusher.client.channel.PresenceChannelEventListener;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
+import com.uphyca.idobata.event.RoomTouchedEvent;
 import com.uphyca.idobata.transform.Converter;
 import org.junit.Before;
 import org.junit.Test;
@@ -91,6 +92,19 @@ public class IdobataStreamTest {
 
         verify(presenceChannel).bind(eq(eventName), any(PresenceChannelEventListener.class));
         verify(listener).onEvent(any(MemberStatusChangedEvent.class));
+    }
+
+    @Test
+    public void subscribeRoomTouched() throws Exception {
+        final String eventName = "room_touched";
+
+        IdobataStream.Listener<RoomTouchedEvent> listener = mock(IdobataStream.Listener.class);
+        underTest.subscribeRoomTouched(listener);
+
+        underTest.onEvent(channelName, eventName, "{}");
+
+        verify(presenceChannel).bind(eq(eventName), any(PresenceChannelEventListener.class));
+        verify(listener).onEvent(any(RoomTouchedEvent.class));
     }
 
     @Test

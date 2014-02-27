@@ -16,10 +16,7 @@
 
 package com.uphyca.idobata.transform;
 
-import com.uphyca.idobata.event.MemberStatusChangedEvent;
-import com.uphyca.idobata.event.MemberStatusChangedEventValue;
-import com.uphyca.idobata.event.MessageCreatedEvent;
-import com.uphyca.idobata.event.MessageCreatedEventValue;
+import com.uphyca.idobata.event.*;
 import com.uphyca.idobata.http.TypedInput;
 import com.uphyca.idobata.model.*;
 import org.json.JSONArray;
@@ -109,6 +106,11 @@ public class JSONConverter implements Converter {
             if (type.equals(MessageCreatedEvent.class)) {
                 return asMessageCreatedEvent(getJSONObject(json, "message"));
             }
+
+            if (type.equals(RoomTouchedEvent.class)) {
+                return asRoomTouchedEvent(json);
+            }
+
         } catch (JSONException e) {
             throw new ConversionException(e);
         }
@@ -117,12 +119,15 @@ public class JSONConverter implements Converter {
     }
 
     private static MemberStatusChangedEvent asMemberStatusChangedEvent(JSONObject json) throws JSONException {
-
         return new MemberStatusChangedEventValue(getLong(json, "id"), getString(json, "status"), getString(json, "type"));
     }
 
     private static MessageCreatedEvent asMessageCreatedEvent(JSONObject json) throws JSONException {
         return new MessageCreatedEventValue(getLong(json, "id"), getString(json, "body"), getString(json, "body_plain"), asStringList(getJSONArray(json, "image_urls")), getBoolean(json, "multiline"), asLongList(getJSONArray(json, "mentions")), getString(json, "created_at"), getLong(json, "room_id"), getString(json, "room_name"), getString(json, "organization_slug"), getString(json, "sender_type"), getLong(json, "sender_id"), getString(json, "sender_name"), getString(json, "sender_icon_url"));
+    }
+
+    private static RoomTouchedEvent asRoomTouchedEvent(JSONObject json) throws JSONException {
+        return new RoomTouchedEventValue(getLong(json, "room_id"));
     }
 
     private static String drain(InputStream in) throws IOException {

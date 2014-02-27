@@ -19,6 +19,7 @@ package com.uphyca.idobata;
 import com.uphyca.idobata.event.ConnectionEvent;
 import com.uphyca.idobata.event.MemberStatusChangedEvent;
 import com.uphyca.idobata.event.MessageCreatedEvent;
+import com.uphyca.idobata.event.RoomTouchedEvent;
 
 import java.io.Closeable;
 
@@ -50,6 +51,11 @@ public interface IdobataStream extends Closeable {
      * event: member_status_changed
      */
     IdobataStream subscribeMemberStatusChanged(Listener<MemberStatusChangedEvent> listener);
+
+    /**
+     * event: room_touched
+     */
+    IdobataStream subscribeRoomTouched(Listener<RoomTouchedEvent> listener);
 
     IdobataStream setErrorListener(ErrorListener listener);
 
