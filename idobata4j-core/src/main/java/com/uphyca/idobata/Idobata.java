@@ -88,6 +88,9 @@ public interface Idobata {
      */
     List<Bot> getBots(List<Long> ids) throws IdobataError;
 
+    /**
+     * /api/user/rooms/${id}/touch
+     */
     void postTouch(long roomId) throws IdobataError;
 
     /**
