@@ -16,6 +16,7 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface Room {
+public interface Room extends Serializable {
 
     long getId();
 

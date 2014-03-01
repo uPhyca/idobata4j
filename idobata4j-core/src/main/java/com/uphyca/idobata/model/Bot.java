@@ -16,20 +16,14 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
+
 /**
  * Represents an bot entity.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface Bot {
-
-    long getId();
-
-    void setId(long id);
-
-    String getName();
-
-    void setName(String name);
+public interface Bot extends Guy, Serializable {
 
     String getIconUrl();
 
@@ -38,12 +32,4 @@ public interface Bot {
     String getApiToken();
 
     void setApiToken(String apiToken);
-
-    String getStatus();
-
-    void setStatus(String status);
-
-    String getChannelName();
-
-    void setChannelName(String channelName);
 }

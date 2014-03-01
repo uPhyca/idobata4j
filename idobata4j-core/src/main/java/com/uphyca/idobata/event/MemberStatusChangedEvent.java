@@ -16,12 +16,14 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
+
 /**
  * Represents an member_status_changed event.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface MemberStatusChangedEvent {
+public interface MemberStatusChangedEvent extends Serializable {
     long getId();
 
     String getStatus();

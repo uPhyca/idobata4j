@@ -16,12 +16,14 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
+
 /**
  * Represents an room_touched event.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface RoomTouchedEvent {
+public interface RoomTouchedEvent extends Serializable {
 
     long getRoomId();
 }

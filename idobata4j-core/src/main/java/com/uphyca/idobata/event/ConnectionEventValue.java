@@ -16,10 +16,12 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
+
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class ConnectionEventValue implements ConnectionEvent {
+public class ConnectionEventValue implements ConnectionEvent, Serializable {
 
     private final int type;
 

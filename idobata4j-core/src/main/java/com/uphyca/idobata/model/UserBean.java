@@ -22,37 +22,13 @@ import java.util.List;
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class UserBean implements User, Serializable {
+public class UserBean extends GuyBean implements User, Serializable {
 
-    private long id;
-    private String name;
     private String gravatarId;
-    private String status;
     private String email;
-    private String channelName;
     private String githubToken;
     private List<Long> organizationIds;
     private List<Long> roomIds;
-
-    @Override
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String getGravatarId() {
@@ -65,16 +41,6 @@ public class UserBean implements User, Serializable {
     }
 
     @Override
-    public String getStatus() {
-        return status;
-    }
-
-    @Override
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    @Override
     public String getEmail() {
         return email;
     }
@@ -82,16 +48,6 @@ public class UserBean implements User, Serializable {
     @Override
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    @Override
-    public String getChannelName() {
-        return channelName;
-    }
-
-    @Override
-    public void setChannelName(String channelName) {
-        this.channelName = channelName;
     }
 
     @Override

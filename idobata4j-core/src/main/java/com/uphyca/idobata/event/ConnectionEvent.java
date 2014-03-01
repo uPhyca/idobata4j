@@ -16,12 +16,14 @@
 
 package com.uphyca.idobata.event;
 
+import java.io.Serializable;
+
 /**
  * Represents an connection event.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface ConnectionEvent {
+public interface ConnectionEvent extends Serializable {
 
     public static final int CLOSED = 0;
     public static final int OPENED = 1;

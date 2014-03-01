@@ -16,6 +16,7 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface Records {
+public interface Records extends Serializable {
     List<Organization> getOrganizations();
 
     void setOrganizations(List<Organization> organizations);
@@ -35,4 +36,8 @@ public interface Records {
     User getUser();
 
     void setUser(User user);
+
+    Bot getBot();
+
+    void setBot(Bot bot);
 }

@@ -14,42 +14,30 @@
  * limitations under the License.
  */
 
-package com.uphyca.idobata.event;
+package com.uphyca.idobata.model;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
- * Represents an message_created event.
+ * Represents an guy entity.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface MessageCreatedEvent extends Serializable {
+public interface Guy extends Serializable {
+
     long getId();
 
-    String getBody();
+    void setId(long id);
 
-    String getBodyPlain();
+    String getName();
 
-    List<String> getImageUrls();
+    void setName(String name);
 
-    boolean isMultiline();
+    String getStatus();
 
-    List<Long> getMentions();
+    void setStatus(String status);
 
-    String getCreatedAt();
+    String getChannelName();
 
-    long getRoomId();
-
-    String getRoomName();
-
-    String getOrganizationSlug();
-
-    String getSenderType();
-
-    long getSenderId();
-
-    String getSenderName();
-
-    String getSenderIconUrl();
+    void setChannelName(String channelName);
 }

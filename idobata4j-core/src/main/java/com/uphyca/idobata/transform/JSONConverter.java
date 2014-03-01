@@ -159,6 +159,12 @@ public class JSONConverter implements Converter {
         drain(getJSONObject(json, "user"), user);
         drain(getJSONObject(json, "bot"), user);
         records.setUser(user);
+
+        if (json.has("bot")) {
+            BotBean bot = new BotBean();
+            drain(getJSONObject(json, "bot"), bot);
+            records.setBot(bot);
+        }
     }
 
     private static void drain(JSONObject json, Organization organization) throws JSONException {

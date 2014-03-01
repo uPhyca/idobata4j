@@ -16,12 +16,14 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
+
 /**
  * Represents an seed entity.
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface Seed {
+public interface Seed extends Serializable {
     long getVersion();
 
     void setVersion(long version);

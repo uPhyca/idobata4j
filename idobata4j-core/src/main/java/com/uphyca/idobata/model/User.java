@@ -16,6 +16,7 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,31 +24,15 @@ import java.util.List;
  * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface User {
-
-    long getId();
-
-    void setId(long id);
-
-    String getName();
-
-    void setName(String name);
+public interface User extends Guy, Serializable {
 
     String getGravatarId();
 
     void setGravatarId(String gravatarId);
 
-    String getStatus();
-
-    void setStatus(String status);
-
     String getEmail();
 
     void setEmail(String email);
-
-    String getChannelName();
-
-    void setChannelName(String channelName);
 
     String getGithubToken();
 

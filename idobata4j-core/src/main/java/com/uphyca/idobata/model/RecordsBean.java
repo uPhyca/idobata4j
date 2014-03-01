@@ -27,6 +27,7 @@ public class RecordsBean implements Records, Serializable {
     private List<Organization> organizations;
     private List<Room> rooms;
     private User user;
+    private Bot bot;
 
     @Override
     public List<Organization> getOrganizations() {
@@ -56,5 +57,15 @@ public class RecordsBean implements Records, Serializable {
     @Override
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public Bot getBot() {
+        return bot;
+    }
+
+    @Override
+    public void setBot(Bot bot) {
+        this.bot = bot;
     }
 }

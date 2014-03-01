@@ -21,28 +21,50 @@ import java.io.Serializable;
 /**
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public class BotBean extends GuyBean implements Bot, Serializable {
+public class GuyBean implements Guy, Serializable {
 
-    private String iconUrl;
-    private String apiToken;
+    private long id;
+    private String name;
+    private String status;
+    private String channelName;
 
     @Override
-    public String getIconUrl() {
-        return iconUrl;
+    public long getId() {
+        return id;
     }
 
     @Override
-    public void setIconUrl(String iconUrl) {
-        this.iconUrl = iconUrl;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
-    public String getApiToken() {
-        return apiToken;
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setApiToken(String apiToken) {
-        this.apiToken = apiToken;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String getChannelName() {
+        return channelName;
+    }
+
+    @Override
+    public void setChannelName(String channelName) {
+        this.channelName = channelName;
     }
 }

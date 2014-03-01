@@ -16,14 +16,15 @@
 
 package com.uphyca.idobata.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Represents an message entity.
- *
+ * 
  * @author Sosuke Masui (masui@uphyca.com)
  */
-public interface Message {
+public interface Message extends Serializable {
     long getId();
 
     void setId(long id);
