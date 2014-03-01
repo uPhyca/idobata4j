@@ -49,4 +49,9 @@ public class HttpError extends IdobataError {
     public String toString() {
         return super.toString() + "," + "url='" + url + '\'' + ", status=" + status + ", reason='" + reason + '\'';
     }
+
+    @Override
+    public String getMessage() {
+        return url + " " + status + " " + reason;
+    }
 }
