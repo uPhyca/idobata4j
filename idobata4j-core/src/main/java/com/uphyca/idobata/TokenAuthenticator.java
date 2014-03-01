@@ -32,19 +32,33 @@ import java.util.List;
  */
 public class TokenAuthenticator implements RequestInterceptor {
 
-    private final String token;
+    /**
+     * The provider to rovides token to authenticate.
+     */
+    public interface TokenProvider {
+        String get();
+    }
+
+    private final TokenProvider mTokenProvider;
+
+    /**
+     * @param tokenProvider The tokenProvider to obtain the token for authentication.
+     */
+    public TokenAuthenticator(TokenProvider tokenProvider) {
+        mTokenProvider = tokenProvider;
+    }
 
     /**
      * @param token The token for authentication.
      */
     public TokenAuthenticator(String token) {
-        this.token = token;
+        this.mTokenProvider = new SimpleTokenProvider(token);
     }
 
     @Override
     public Response execute(Client client, Request request) throws IdobataError {
         List<Header> requestHeaders = new ArrayList<Header>(request.getHeaders());
-        requestHeaders.add(new Header("X-API-Token", token));
+        requestHeaders.add(new Header("X-API-Token", mTokenProvider.get()));
         try {
             Response response = client.execute(new Request(request.getMethod(), request.getUrl(), requestHeaders, request.getBody()));
             int status = response.getStatus();
@@ -54,6 +68,20 @@ public class TokenAuthenticator implements RequestInterceptor {
             return response;
         } catch (IOException e) {
             throw new IdobataError(e);
+        }
+    }
+
+    private static final class SimpleTokenProvider implements TokenProvider {
+
+        private final String mToken;
+
+        private SimpleTokenProvider(String token) {
+            mToken = token;
+        }
+
+        @Override
+        public String get() {
+            return mToken;
         }
     }
 }
