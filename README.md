@@ -27,14 +27,15 @@ Endpoint  | Http method | Java API
 Usage
 ----
 
-As the user.
+Post a message as an user.
 
 ```Java
-String email = ...
-String password = ...
-String organizationSlug = ...
-String roomName = ...
-String source = ...
+String email = "SET-YOUR-EMAIL";
+String password = "SET-YOUR-PASSWORD";
+String organizationSlug = "SET-YOUR-ORGANIZATION_SLUG";
+String roomName = "SET-YOUR-ROOM-NAME";
+
+String source = "Hello, Idobata.";
 
 RequestInterceptor authenticator = new FormAuthenticator(email, password);
 Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
@@ -45,13 +46,14 @@ idobata.postMessage(room.getId(), source);
 
 ```
 
-As the bot.
+Post a message as a bot.
 
 ```Java
-String apiToken = ...
-String organizationSlug = ...
-String roomName = ...
-String source = ...
+String apiToken = "SET-YOUR-API-TOKEN";
+String organizationSlug = "SET-YOUR-ORGANIZATION_SLUG";
+String roomName = "SET-YOUR-ROOM-NAME";
+
+String source = "Hello, Idobata.";
 
 RequestInterceptor authenticator = new TokenAuthenticator(apiToken);
 Idobata idobata = new IdobataBuilder().setRequestInterceptor(authenticator)
@@ -62,7 +64,7 @@ idobata.postMessage(room.getId(), source);
 
 ```
 
-Subscribing stream.
+Subscribing push events.
 
 ```Java
 RequestInterceptor authenticator = ...
