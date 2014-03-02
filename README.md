@@ -2,6 +2,28 @@
 
 Idobata4J is a Idobata(https://idobata.io) API binding library for the Java language licensed under Apache License 2.0.
 
+Supported endpoints
+----
+
+Endpoint  | Http method | Java API
+------------- | ------------- | -------------
+/api/seed  | GET | Seed Idobata.getSeed()
+/api/messages | GET | List<Message> Idobata.getMessages(List<String> ids)
+/api/messages | GET | List<Message> Idobata.getMessages(long roomId, long olderThan)
+/api/messages | POST | Message Idobata.postMessage(long roomId, String source)
+/api/messages | POST | Message Idobata.postMessage(long roomId, String fileName, String contentType, InputStream content)
+/api/messages/${id} | DELETE | Message Idobata.deleteMessage(long messageId)
+/api/users | GET | List<User> Idobata.getUsers(List<Long> ids)
+/api/users/${id} | GET | User Idobata.getUser(long guyId)
+/api/rooms | GET | List<Room> Idobata.getRooms(List<Long> ids)
+/api/rooms | GET | Room Idobata.getRoom(String organizationSlug, String roomName)
+/api/rooms | GET | @Deprecated List<Room> Idobata.getRooms(String organizationSlug, String roomName)
+/api/room/${id} | GET | Room Idobata.getRoom(long roomId)
+/api/bots | GET | List<Bot> getBots(List<Long> ids)
+/api/user/rooms/${id}/touch | POST | void Idobata.postTouch(long roomId)
+/pusher/auth | POST | String Idobata.postPusherAuth(String channelName, String socketId)
+
+
 Usage
 ----
 
