@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 0.9.4 *(2014-03-02)*
+----------------------------
+
+- Added /api/user/rooms/${id}/touch.
+- Added room_touched event.
+- Added Idobata.getRoom(organizationSlug, roomName):Room
+- Added TokenAuthenticator.TokenProvider to provides api-token at runtime.
+- Changed Introduce base class for User and Bot.
+- Fixed some issues.
+
+
 Version 0.9.3 *(2014-02-27)*
 ----------------------------
 
