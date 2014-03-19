@@ -95,6 +95,16 @@ public interface Idobata {
     List<Bot> getBots(List<Long> ids) throws IdobataError;
 
     /**
+     * /api/rooms/${id}/bots
+     */
+    Bot postBot(long roomId, String botName) throws IdobataError;
+
+    /**
+     * /api/bots
+     */
+    Bot postBot(String botName, long organizationId) throws IdobataError;
+
+    /**
      * /api/user/rooms/${id}/touch
      */
     void postTouch(long roomId) throws IdobataError;

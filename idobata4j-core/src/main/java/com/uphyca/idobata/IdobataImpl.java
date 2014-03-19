@@ -220,6 +220,34 @@ class IdobataImpl implements Idobata {
     }
 
     @Override
+    public Bot postBot(long roomId, String botName) throws IdobataError {
+        Endpoint endpoint = new Endpoint("https://idobata.io/api/rooms").addPath(Long.toString(roomId)).addPath("bots");
+        FormUrlEncodedTypedOutput body = new FormUrlEncodedTypedOutput().addField("bot[name]", botName);
+        Request request = new Request("POST", endpoint.build(), Collections.<Header> emptyList(), body);
+        Response response = requestInterceptor.execute(client, request);
+        try {
+            return converter.convert(response.getBody(), Bot.class);
+        } catch (Exception e) {
+            throw new IdobataError(e);
+        }
+    }
+
+    @Override
+    public Bot postBot(String botName, long organizationId) throws IdobataError {
+        Endpoint endpoint = new Endpoint("https://idobata.io/api/bots");
+        FormUrlEncodedTypedOutput body = new FormUrlEncodedTypedOutput().addField("bot[name]", botName)
+                                                                        .addField("bot[organization_id]", Long.toString(organizationId));
+        Request request = new Request("POST", endpoint.build(), Collections.<Header> emptyList(), body);
+        Response response = requestInterceptor.execute(client, request);
+        try {
+            return converter.convert(response.getBody(), Bot.class);
+        } catch (Exception e) {
+            throw new IdobataError(e);
+        }
+
+    }
+
+    @Override
     public void postTouch(long roomId) throws IdobataError {
         Endpoint endpoint = new Endpoint("https://idobata.io/api/user/rooms").addPath(roomId)
                                                                              .addPath("touch");

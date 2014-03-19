@@ -393,6 +393,71 @@ public class IdobataTest {
     }
 
     @Test
+    public void testPostBotOnRoom() throws Exception {
+        Response response = mock(Response.class);
+        Bot expectedBot = new BotBean();
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+
+        given(response.getBody()).willReturn(mock(TypedInput.class));
+        given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
+        given(converter.convert(response.getBody(), Bot.class)).willReturn(expectedBot);
+
+        long roomId = 1L;
+        String botName = "myBot";
+        Bot actualBot = underTest.postBot(roomId, botName);
+
+        assertThat(actualBot).isEqualTo(expectedBot);
+        Request actualRequest = requestCaptor.getValue();
+        assertThat(actualRequest.getMethod()).isEqualTo("POST");
+        assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/api/rooms").addPath(Long.toString(roomId))
+                                                                                                 .addPath("bots").build());
+        assertThat(actualRequest.getHeaders()).isEmpty();
+        assertThat(actualRequest.getBody()).isNotNull();
+        ByteArrayOutputStream actualPostBody = new ByteArrayOutputStream();
+        actualRequest.getBody()
+                .writeTo(actualPostBody);
+        String expectedPostBody = new StringBuilder().append(URLEncoder.encode("bot[name]", "UTF-8"))
+                                                     .append('=')
+                                                     .append(botName)
+                                                     .toString();
+        assertThat(actualPostBody.toString("UTF-8")).isEqualTo(expectedPostBody);
+    }
+
+    @Test
+    public void testPostBotOnOrganization() throws Exception {
+        Response response = mock(Response.class);
+        Bot expectedBot = new BotBean();
+        ArgumentCaptor<Request> requestCaptor = ArgumentCaptor.forClass(Request.class);
+
+        given(response.getBody()).willReturn(mock(TypedInput.class));
+        given(requestInterceptor.execute(same(client), requestCaptor.capture())).willReturn(response);
+        given(converter.convert(response.getBody(), Bot.class)).willReturn(expectedBot);
+
+        String botName = "myBot";
+        long organizationId = 1L;
+        Bot actualBot = underTest.postBot(botName, organizationId);
+
+        assertThat(actualBot).isEqualTo(expectedBot);
+        Request actualRequest = requestCaptor.getValue();
+        assertThat(actualRequest.getMethod()).isEqualTo("POST");
+        assertThat(actualRequest.getUrl()).isEqualTo(new Endpoint("https://idobata.io/api/bots").build());
+        assertThat(actualRequest.getHeaders()).isEmpty();
+        assertThat(actualRequest.getBody()).isNotNull();
+        ByteArrayOutputStream actualPostBody = new ByteArrayOutputStream();
+        actualRequest.getBody()
+                .writeTo(actualPostBody);
+        String expectedPostBody = new StringBuilder().append(URLEncoder.encode("bot[name]", "UTF-8"))
+                                                     .append('=')
+                                                     .append(botName)
+                                                     .append('&')
+                                                     .append(URLEncoder.encode("bot[organization_id]", "UTF-8"))
+                                                     .append('=')
+                                                     .append(Long.toString(organizationId))
+                                                     .toString();
+        assertThat(actualPostBody.toString("UTF-8")).isEqualTo(expectedPostBody);
+    }
+
+    @Test
     public void testPostTouch() throws Exception {
         Response response = mock(Response.class);
         Message expectedMessage = new MessageBean();

@@ -19,7 +19,9 @@ Endpoint  | Http method | Java API
 /api/rooms | GET | Room Idobata.getRoom(String organizationSlug, String roomName)
 /api/rooms | GET | @Deprecated List<Room> Idobata.getRooms(String organizationSlug, String roomName)
 /api/room/${id} | GET | Room Idobata.getRoom(long roomId)
+/api/rooms/${id}/bots | POST | Bot postBot(long roomId, String botName)
 /api/bots | GET | List<Bot> getBots(List<Long> ids)
+/api/bots | POST | Bot postBot(String botName, long organizationId)
 /api/user/rooms/${id}/touch | POST | void Idobata.postTouch(long roomId)
 /pusher/auth | POST | String Idobata.postPusherAuth(String channelName, String socketId)
 
