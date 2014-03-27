@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 0.9.4 *(2014-03-27)*
+----------------------------
+
+- Added POST /api/rooms/${id}/bots
+- Added POST /api/bots
+
+
 Version 0.9.4 *(2014-03-02)*
 ----------------------------
 
