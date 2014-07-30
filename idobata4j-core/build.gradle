@@ -6,6 +6,7 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'nexus'
+apply plugin: 'idea'
 
 targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
@@ -119,5 +120,11 @@ modifyPom {
                 name POM_DEVELOPER_NAME
             }
         }
+    }
+}
+
+idea {
+    module {
+        scopes.PROVIDED.plus += configurations.provided
     }
 }
