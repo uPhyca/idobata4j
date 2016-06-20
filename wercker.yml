@@ -1,0 +1,7 @@
+box: java:6
+build:
+    steps:
+        - build
+        - script:
+            name: build
+            code: ./gradlew build
